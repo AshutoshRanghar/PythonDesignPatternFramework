@@ -1,0 +1,19 @@
+{
+  "name": "PySpark_ETL_Job",
+  "new_cluster": {
+    "spark_version": "13.3.x-scala2.12",
+    "node_type_id": "Standard_DS3_v2",
+    "num_workers": 2
+  },
+  "libraries": [
+    {
+      "whl": "dbfs:/FileStore/wheels/factory_design_pattern-1.0.0-py3-none-any.whl"
+    }
+  ],
+  "python_wheel_task": {
+    "package_name": "pyspark_project",
+    "entry_point": "etl_job",
+    "parameters": []
+  },
+  "max_concurrent_runs": 1
+}
