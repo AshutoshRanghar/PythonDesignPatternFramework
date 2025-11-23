@@ -74,7 +74,7 @@ jobs:
         run: |
           echo "Ensuring Databricks job exists..."
 
-          JOB_NAME="PySpark_ETL_Job"
+          JOB_NAME="PythonDesignPattern"
           EXISTING_JOB_ID=$(databricks jobs list --output json | jq -r '.jobs[] | select(.settings.name=="'${JOB_NAME}'") | .job_id')
 
           if [ -z "$EXISTING_JOB_ID" ] || [ "$EXISTING_JOB_ID" == "null" ]; then
