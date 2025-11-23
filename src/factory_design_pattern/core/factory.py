@@ -1,5 +1,5 @@
-from factory_design_pattern.core.fct_processor import FactProcessor
-from factory_design_pattern.core.scd_processor import SCD2Processor
+from src.factory_design_pattern.core.fct_processor import FactProcessor
+from src.factory_design_pattern.core.scd_processor import SCD2Processor
 class ProcessorFactory:
     """FACTORY PATTERN → Creates correct processor instance"""
     @staticmethod
