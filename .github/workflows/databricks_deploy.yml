@@ -1,0 +1,101 @@
+name: Deploy PySpark Project to Databricks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+#      # 3️⃣ Install dependencies and build wheel
+#      - name: Install dependencies and build wheel
+#        run: |
+#          python -m pip install --upgrade pip setuptools wheel
+#          if [ -f requirements.txt ]; then
+#            pip install -r requirements.txt
+#          fi
+#          python setup.py bdist_wheel
+#          sudo apt-get update && sudo apt-get install -y jq
+#          ls -lh dist/
+
+      # 3️⃣ Install Poetry and build wheel
+      - name: Install Poetry and build wheel
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+
+          echo "Installing dependencies with Poetry..."
+          poetry install --no-root
+
+          echo "Building wheel..."
+          poetry build
+
+          sudo apt-get update && sudo apt-get install -y jq
+          ls -lh dist/
+
+
+      # 4️⃣ Install NEW Databricks CLI (v0.205+)
+      - name: Install Databricks CLI (new)
+        run: |
+          pip install databricks-cli==0.18.0
+          echo "CLI installed successfully"
+          databricks --version
+
+      # 6️⃣ Upload wheel to DBFS
+      - name: Upload wheel to DBFS
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          WHEEL_PATH=$(ls dist/*.whl | head -n 1)
+          echo "Uploading $WHEEL_PATH to DBFS..."
+          databricks fs mkdirs dbfs:/FileStore/wheels
+          databricks fs cp "$WHEEL_PATH" dbfs:/FileStore/wheels/ --overwrite
+
+
+      # 7️⃣ Create or Update Databricks Job
+      - name: Create or Update Databricks Job
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          echo "Ensuring Databricks job exists..."
+
+          JOB_NAME="PySpark_ETL_Job"
+          EXISTING_JOB_ID=$(databricks jobs list --output json | jq -r '.jobs[] | select(.settings.name=="'${JOB_NAME}'") | .job_id')
+
+          if [ -z "$EXISTING_JOB_ID" ] || [ "$EXISTING_JOB_ID" == "null" ]; then
+            echo "Job not found. Creating a new one..."
+            CREATE_OUTPUT=$(databricks jobs create --json-file databricks_job.json)
+            JOB_ID=$(echo "$CREATE_OUTPUT" | jq -r '.job_id')
+            echo "Created new job with ID $JOB_ID"
+          else
+            echo "Job already exists with ID $EXISTING_JOB_ID. Updating it..."
+            databricks jobs update --job-id "$EXISTING_JOB_ID" --json-file databricks_job.json
+            JOB_ID="$EXISTING_JOB_ID"
+            echo "✅ Updated job with ID $JOB_ID"
+          fi
+
+          echo "JOB_ID=$JOB_ID" >> $GITHUB_ENV
+
+      # 8️⃣ Run Databricks Job
+      - name: Run Databricks Job
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          echo "Running Databricks job ID: $JOB_ID..."
+          databricks jobs run-now --job-id "$JOB_ID"
