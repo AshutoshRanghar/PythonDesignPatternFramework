@@ -2,7 +2,7 @@
 
 from core.factory import ProcessorFactory
 from utils.logger import Logger
-from src.factory_design_pattern.utils.validations import SchemaValidator
+from factory_design_pattern.utils.validations import SchemaValidator
 
 class ETLRunner:
     """Main orchestration class called by Databricks job."""
