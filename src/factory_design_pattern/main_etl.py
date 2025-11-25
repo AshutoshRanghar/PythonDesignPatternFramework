@@ -1,6 +1,6 @@
 # main_etl.py
 
-from core.factory import ProcessorFactory
+from factory_design_pattern.core.factory import ProcessorFactory
 from utils.logger import Logger
 from factory_design_pattern.utils.validations import SchemaValidator
 
@@ -16,7 +16,7 @@ class ETLRunner:
 
         # Validate essential config keys
         required_keys = ["table_name", "table_type", "source_path", "target_path"]
-        self.validator.validate_config(config, required_keys)
+        # self.validator.validate_config(config, required_keys)
 
         # Get processor (Factory Pattern)
         processor = ProcessorFactory.get_processor(config)
