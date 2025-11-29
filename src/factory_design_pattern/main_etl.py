@@ -40,17 +40,17 @@ class ETLRunner:
 
 
 # Databricks Entry Point
-def main(config: dict):
-    runner = ETLRunner()
-    return runner.run_table(config)
-
-
-# If running as script (optional)
-if __name__ == "__main__":
+def main():
     sample = {
         "table_name": "customer_dim",
         "table_type": "SCD2",
         "source_path": "/FileStore/capstoneprojash/datasets/raw/gym_logins_bz",
         "target_path": "/FileStore/capstoneprojash/datasets/raw_new/"
     }
-    main(sample)
+    runner = ETLRunner()
+    return runner.run_table(sample)
+
+
+# If running as script (optional)
+if __name__ == "__main__":
+    main()
