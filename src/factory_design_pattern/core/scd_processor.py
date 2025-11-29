@@ -14,7 +14,7 @@ class SCD2Processor(BaseProcessor):
 
     def extract(self):
         print("Inside Extract of SCD Processor")
-        return self.spark.read.format("delta").load(self.source_path)
+        return self.spark.read.csv(self.source_path)
 
 
     def transform(self, df):
