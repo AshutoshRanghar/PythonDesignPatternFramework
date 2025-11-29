@@ -1,7 +1,7 @@
 # main_etl.py
 
 from factory_design_pattern.core.factory import ProcessorFactory
-from utils.logger import Logger
+from factory_design_pattern.utils.logger import Logger
 from factory_design_pattern.utils.validations import SchemaValidator
 
 class ETLRunner:
