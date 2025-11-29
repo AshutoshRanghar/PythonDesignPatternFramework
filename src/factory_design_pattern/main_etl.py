@@ -50,7 +50,7 @@ if __name__ == "__main__":
     sample = {
         "table_name": "customer_dim",
         "table_type": "SCD2",
-        "source_path": "/mnt/silver/customer/",
-        "target_path": "/mnt/gold/customer/"
+        "source_path": "/FileStore/capstoneprojash/datasets/raw/gym_logins_bz",
+        "target_path": "/FileStore/capstoneprojash/datasets/raw_new/"
     }
     main(sample)

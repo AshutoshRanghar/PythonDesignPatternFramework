@@ -1,6 +1,6 @@
 from pyspark.sql.functions import current_timestamp
 from base_processor import BaseProcessor
-from src.factory_design_pattern.utils.spark_singleton import SparkSingleton
+from factory_design_pattern.utils.spark_singleton import SparkSingleton
 class SCD2Processor(BaseProcessor):
     """SCD2 Implementation class (Polymorphism → overrides BaseProcessor methods)"""
 

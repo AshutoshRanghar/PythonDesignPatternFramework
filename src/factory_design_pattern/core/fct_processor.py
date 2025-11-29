@@ -1,5 +1,5 @@
 from base_processor import BaseProcessor
-from src.factory_design_pattern.utils.spark_singleton import SparkSingleton
+from factory_design_pattern.utils.spark_singleton import SparkSingleton
 class FactProcessor(BaseProcessor):
     """FACT table ETL"""
 
